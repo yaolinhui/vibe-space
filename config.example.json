@@ -1,0 +1,43 @@
+{
+  "layout": {
+    "rows": 2,
+    "cols": 3
+  },
+  "projects": [],
+  "ai": {
+    "provider": "kimi",
+    "apiKey": ""
+  },
+  "startupCommand": "claude",
+  "theme": {
+    "bgColor": "#0d1117",
+    "paneColor": "#161b22",
+    "borderColor": "#30363d",
+    "fontSize": 11,
+    "style": "dark",
+    "scrollback": 1000,
+    "showScrollbar": false
+  },
+  "loop": {
+    "silenceThreshold": 30,
+    "autoPassDelay": 15
+  },
+  "taskTemplates": [
+    {
+      "name": "Bug Hunt",
+      "text": "Search for obvious bugs in this project. List each bug with file path and suggested fix."
+    },
+    {
+      "name": "Code Review",
+      "text": "Review the recent changes in this project for code quality, security, and performance issues."
+    },
+    {
+      "name": "Refactor Entry",
+      "text": "Refactor the main entry point for better readability and maintainability."
+    },
+    {
+      "name": "Add Tests",
+      "text": "Add unit tests for the core logic. Use the existing test framework."
+    }
+  ]
+}

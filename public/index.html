@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#161b22">
+  <meta name="description" content="Multi-project terminal workspace for AI coding agents">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <title>Vibe Space — Multi-Agent Workspace</title>
+  <link rel="stylesheet" href="/xterm-css/xterm.css">
+  <link rel="stylesheet" href="styles.css?v=33">
+</head>
+<body>
+  <header class="title-bar">
+    <div class="brand">
+      <span class="logo">◈</span>
+      <span class="title" data-i18n="header.title">Vibe Space</span>
+    </div>
+    <div class="subtitle" data-i18n="header.subtitle">Multi-Project Terminal Workspace</div>
+    <div class="quota-bar" id="quotaBar" aria-label="Kimi quota status">
+      <span class="quota-loading" data-i18n="quota.loading">Loading quota…</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="status">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text" data-i18n="header.connecting" data-i18n-dynamic>Connecting...</span>
+      </div>
+      <button class="stats-btn" id="statsBtn" title="使用统计">📊</button>
+      <button class="settings-btn" id="settingsBtn" title="Settings" data-i18n-title="common.settings">⚙️</button>
+    </div>
+  </header>
+  <main id="grid" class="grid"></main>
+
+  <!-- Task Panel -->
+  <div class="task-overlay" id="taskOverlay"></div>
+  <div class="task-panel" id="taskPanel">
+    <div class="task-panel-resizer" id="taskPanelResizer"></div>
+    <div class="task-panel-header">
+      <span class="task-panel-title" id="taskPanelTitle" data-i18n="taskPanel.title">Task List</span>
+      <div class="task-panel-actions">
+        <button class="task-panel-close" id="taskPanelClose" data-i18n="common.close">✕</button>
+      </div>
+    </div>
+    <div class="task-list" id="taskList"></div>
+    <div class="task-add-box">
+      <textarea id="taskText" data-i18n-placeholder="taskPanel.placeholder" placeholder="Enter a task for Claude to handle, multi-line supported...
+Example:
+1. Search for obvious bugs in this project
+2. Optimize the home page loading speed" rows="4"></textarea>
+      <div class="task-templates" id="taskTemplates">
+        <span class="task-templates-label" data-i18n="taskPanel.fromTemplate">From Template:</span>
+        <button class="task-template-btn" data-text="检索当前项目的明显 bug">🔍 查 bug</button>
+        <button class="task-template-btn" data-text="运行测试并修复失败的用例">🧪 跑测试</button>
+        <button class="task-template-btn" data-text="检查代码质量，指出可优化的地方">✨ 代码质量</button>
+        <button class="task-template-btn" data-text="分析当前项目状态，给出下一步建议">📊 状态分析</button>
+        <button class="task-template-btn" data-text="将当前修改提交到 GitHub">🚀 提交 GitHub</button>
+      </div>
+      <div class="task-attachments-bar">
+        <input type="file" id="taskFileInput" multiple accept="image/*,.txt,.md,.json,.js,.ts,.html,.css,.py,.java,.c,.cpp,.go,.rs,.xml,.yaml,.yml,.sql,.sh,.ps1" style="display:none">
+        <button class="btn-attach" id="btnAttach" title="Attach image or file" data-i18n="taskPanel.addAttachment">📎 Attach</button>
+        <span class="task-attach-hint" data-i18n="taskPanel.attachmentHint">Supports images, code files, etc. (max 2MB each)</span>
+      </div>
+      <div class="task-attachments-preview" id="taskAttachmentsPreview"></div>
+      <button class="btn-task-add" id="btnTaskAdd" data-i18n="taskPanel.addTask">+ Add Task</button>
+    </div>
+    <div class="task-loop-row">
+      <button class="btn-run-all" id="btnRunAll" data-i18n="taskPanel.runAll">📤 Run All</button>
+      <button class="btn-stop-loop" id="btnStopLoop" style="display:none" data-i18n="taskPanel.stopLoop">⏹ Stop</button>
+      <div class="loop-status" id="loopStatus" data-i18n="taskPanel.loopStatus">Waiting</div>
+      <label class="task-loop-label">
+        <input type="checkbox" id="taskLoopToggle">
+        <span data-i18n="taskPanel.autoReset">Auto-clear and continue next round when all pass</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-panel-header">
+      <span class="settings-panel-title" data-i18n="settingsPanel.title">Settings</span>
+      <button class="settings-panel-close" id="settingsPanelClose" data-i18n="common.close">✕</button>
+    </div>
+
+    <h3 data-i18n="settingsPanel.appearance">Appearance</h3>
+
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.language">Language</label>
+      <select id="langSelector" class="vs-select">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.themePreset">Theme Preset</label>
+      <div class="preset-themes" id="presetThemes"></div>
+    </div>
+
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.bgColor">Background Color</label>
+      <input type="color" id="bgColor" value="#0d1117">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.paneColor">Pane Color</label>
+      <input type="color" id="paneColor" value="#161b22">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.borderColor">Border Color</label>
+      <input type="color" id="borderColor" value="#30363d">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.fontSize">Font Size</label>
+      <select id="fontSize" class="vs-select">
+        <option value="10">10px</option>
+        <option value="11" selected>11px</option>
+        <option value="12">12px</option>
+        <option value="13">13px</option>
+        <option value="14">14px</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.themeStyle">Theme Style</label>
+      <select id="themeStyle" class="vs-select">
+        <option value="dark" selected>Dark</option>
+        <option value="obsidian">Obsidian</option>
+        <option value="blue">Deep Blue</option>
+        <option value="catppuccin">Catppuccin</option>
+        <option value="sakura">Sakura</option>
+        <option value="cottonCandy">Cotton Candy</option>
+        <option value="tokyoNight">Tokyo Night</option>
+        <option value="dracula">Dracula</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="matrix">Matrix</option>
+        <option value="everforest">Everforest</option>
+        <option value="nord">Nord</option>
+        <option value="light">Light</option>
+        <option value="paper">Paper</option>
+        <option value="sepia">Sepia</option>
+      </select>
+    </div>
+
+    <h3 class="settings-section-title" data-i18n="settingsPanel.terminalAndLoop">Terminal & Loop</h3>
+
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.scrollback">Scrollback Lines</label>
+      <input type="number" id="scrollbackSetting" class="vs-input" value="1000" min="100" max="10000" step="100">
+    </div>
+    <div class="settings-row">
+      <label><span data-i18n="settingsPanel.silenceThreshold">Silence Threshold</span> <span id="silenceThresholdDisplay" class="range-badge">60s</span></label>
+      <input type="range" id="silenceThresholdSetting" class="vs-range" min="30" max="600" value="60" step="10">
+    </div>
+    <div class="settings-row">
+      <label><span data-i18n="settingsPanel.autoPassDelay">Auto-Pass Delay</span> <span id="autoPassDelayDisplay" class="range-badge">15s</span></label>
+      <input type="range" id="autoPassDelaySetting" class="vs-range" min="5" max="60" value="15" step="5">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.silenceConfirmCount">Silence Confirm Count</label>
+      <input type="number" id="silenceConfirmCountSetting" class="vs-input" value="2" min="1" max="10" step="1">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.busyExtraSilence">Busy Extra Silence (ms)</label>
+      <input type="number" id="busyExtraSilenceMsSetting" class="vs-input" value="15000" min="0" max="60000" step="1000">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.stuckTaskTimeout">Stuck Task Timeout (ms)</label>
+      <input type="number" id="stuckTaskTimeoutMsSetting" class="vs-input" value="120000" min="30000" max="600000" step="10000">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.maxAutoFixAttempts">Max Auto-Fix Attempts</label>
+      <input type="number" id="maxAutoFixAttemptsSetting" class="vs-input" value="3" min="0" max="10" step="1">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.loopAdvanceDelay">Loop Advance Delay (ms)</label>
+      <input type="number" id="loopIntervalMsSetting" class="vs-input" value="1000" min="0" max="30000" step="100">
+    </div>
+
+    <h3 class="settings-section-title" data-i18n="settingsPanel.costEstimation">Cost Estimation</h3>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.inputTokenPrice">Input Token Price ($/1M)</label>
+      <input type="number" id="inputTokenPriceSetting" class="vs-input" value="3.00" min="0" max="100" step="0.01">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.outputTokenPrice">Output Token Price ($/1M)</label>
+      <input type="number" id="outputTokenPriceSetting" class="vs-input" value="15.00" min="0" max="200" step="0.01">
+    </div>
+    <div class="settings-row">
+      <label data-i18n="settingsPanel.cacheTokenPrice">Cache Token Price ($/1M)</label>
+      <input type="number" id="cacheTokenPriceSetting" class="vs-input" value="0.50" min="0" max="50" step="0.01">
+    </div>
+
+    <div class="settings-actions">
+      <button id="btnResetTheme" data-i18n="common.reset">Reset</button>
+      <button class="primary" id="btnSaveTheme" data-i18n="common.save">Save</button>
+    </div>
+  </div>
+
+  <!-- 使用统计面板 -->
+  <div class="stats-overlay" id="statsOverlay"></div>
+  <div class="stats-panel" id="statsPanel">
+    <div class="stats-panel-header">
+      <span class="stats-panel-title" data-i18n="stats.title">📊 使用统计</span>
+      <button class="stats-panel-close" id="statsPanelClose" data-i18n="common.close">✕</button>
+    </div>
+    <div class="stats-body" id="statsBody" data-i18n="stats.loading">加载中...</div>
+  </div>
+
+  <script src="/i18n.js"></script>
+  <script src="/theme-engine.js?v=30"></script>
+  <script src="/xterm/xterm.js"></script>
+  <script src="/xterm-addon-fit/xterm-addon-fit.js"></script>
+  <script src="task-analyzer.js?v=31"></script>
+  <script src="client.js?v=33"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>

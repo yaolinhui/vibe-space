@@ -1,0 +1,16 @@
+{
+  "watch": ["."],
+  "ext": "js,json",
+  "ignore": [
+    "public/**",
+    "node_modules/**",
+    "*.log",
+    "server.log",
+    "server-out.log",
+    "server-err.log"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "exec": "node server.js"
+}

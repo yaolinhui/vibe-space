@@ -1,0 +1,26 @@
+[Unit]
+Description=Vibe Space Multi-Agent Workspace
+After=network.target
+
+[Service]
+Type=simple
+# 按实际用户和路径修改
+User=%I
+WorkingDirectory=/opt/vibe-space
+ExecStart=/usr/bin/node /opt/vibe-space/daemon.js --port=9988
+Restart=always
+RestartSec=5
+# 优雅关闭
+TimeoutStopSec=10
+KillSignal=SIGTERM
+Environment="NODE_ENV=production"
+Environment="PORT=9988"
+
+[Install]
+WantedBy=multi-user.target
+
+# 使用示例（把 %I 替换为你的用户名，或直接用特定用户名）：
+#   sudo cp scripts/vibe-space.service /etc/systemd/system/vibe-space.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now vibe-space
+# 如果要用特定用户，去掉 User=%I 前的注释并改为 User=yourname

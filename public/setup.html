@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="theme-color" content="#161b22">
+  <meta name="description" content="Configure your multi-project terminal workspace">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <title>Vibe Space - Project Config</title>
+  <link rel="stylesheet" href="styles.css?v=31">
+  <link rel="stylesheet" href="setup.css?v=7">
+</head>
+<body>
+  <div class="setup-container">
+    <div class="setup-top-bar">
+      <button class="btn-back" id="btnBack" title="Back to workspace" data-i18n-title="setup.backToWorkspace"><span class="back-arrow">←</span> <span data-i18n="setup.back">Back</span></button>
+      <div class="setup-lang-switcher">
+        <select id="langSelector" class="vs-select">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+    </div>
+    <header class="setup-header">
+      <span class="logo">◈</span>
+      <h1 data-i18n="setup.title">Vibe Space</h1>
+      <p data-i18n="setup.subtitle">Configure your multi-project terminal workspace</p>
+    </header>
+
+    <div class="setup-body">
+      <!-- AI Provider Selection -->
+      <div class="ai-panel">
+        <div class="panel-title">🤖 <span data-i18n="setup.aiProvider">AI Provider</span></div>
+        <div class="ai-options" id="aiOptions">
+          <div class="ai-option active" data-provider="kimi">
+            <div class="ai-name" data-i18n="setup.kimi">Kimi (Moonshot)</div>
+            <div class="ai-desc" data-i18n="setup.kimiDesc">Use Moonshot API via proxy, model: kimi-k2.6</div>
+          </div>
+          <div class="ai-option" data-provider="claude">
+            <div class="ai-name" data-i18n="setup.claude">Claude (Official)</div>
+            <div class="ai-desc" data-i18n="setup.claudeDesc">Call Anthropic API directly, bring your own API key</div>
+          </div>
+        </div>
+        <div class="api-key-row" id="apiKeyRow" style="display:none">
+          <label data-i18n="setup.apiKey">Anthropic API Key</label>
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+        </div>
+      </div>
+
+      <!-- Project List -->
+      <div class="project-list-panel">
+        <div class="panel-title">📁 <span data-i18n="setup.projectList">Project List</span> <span class="count" id="count">0</span></div>
+        <div class="project-list" id="projectList"></div>
+        <div class="empty-tip" id="emptyTip" data-i18n="setup.emptyTip">No projects yet. Add one on the right.</div>
+      </div>
+
+      <!-- Add Form -->
+      <div class="add-form-panel">
+        <div class="panel-title">➕ <span data-i18n="setup.addProject">Add Project</span></div>
+
+        <div class="form-row">
+          <label data-i18n="setup.projectName">Project Name</label>
+          <input type="text" id="projectName" placeholder="e.g. SoloVibe" autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <label data-i18n="setup.projectPath">Project Path</label>
+          <div class="path-input-group">
+            <input type="text" id="projectPath" placeholder="C:\Code\Ideas\SoloVibe">
+            <button class="btn-browse" id="btnBrowse">📂 <span data-i18n="setup.browse">Browse</span></button>
+          </div>
+          <div class="input-hint" data-i18n="setup.pathHint">Paste path directly or click Browse. If dialog is not visible, press Alt+Tab.</div>
+        </div>
+
+        <div class="form-row">
+          <label data-i18n="setup.colorLabel">Color Label</label>
+          <div class="color-picker" id="colorPicker">
+            <div class="color-option active" data-color="#ff7b72" style="background:#ff7b72"></div>
+            <div class="color-option" data-color="#79c0ff" style="background:#79c0ff"></div>
+            <div class="color-option" data-color="#d2a8ff" style="background:#d2a8ff"></div>
+            <div class="color-option" data-color="#7ee787" style="background:#7ee787"></div>
+            <div class="color-option" data-color="#ffa657" style="background:#ffa657"></div>
+            <div class="color-option" data-color="#56d4dd" style="background:#56d4dd"></div>
+            <div class="color-option" data-color="#f778ba" style="background:#f778ba"></div>
+            <div class="color-option" data-color="#e3b341" style="background:#e3b341"></div>
+          </div>
+        </div>
+
+        <button class="btn-add" id="btnAdd"><span data-i18n="setup.addProject">Add Project</span></button>
+      </div>
+    </div>
+
+    <!-- Advanced Settings -->
+    <div class="advanced-settings" id="advancedSettings">
+      <div class="settings-col">
+        <div class="panel-title">🖥️ <span data-i18n="setup.terminalBehavior">Terminal Behavior</span></div>
+        <div class="form-row">
+          <label data-i18n="setup.startupCommand">Startup Command</label>
+          <input type="text" id="startupCommand" placeholder="e.g. claude, npm run dev, python main.py">
+          <div class="input-hint" data-i18n="setup.commandHint">Command to start the AI agent in each project terminal</div>
+        </div>
+        <div class="form-row">
+          <label data-i18n="settingsPanel.scrollback">Scrollback Lines</label>
+          <input type="number" id="scrollback" value="1000" min="100" max="10000" step="100">
+        </div>
+      </div>
+      <div class="settings-col">
+        <div class="panel-title">🔄 <span data-i18n="setup.taskLoop">Task Loop</span></div>
+        <div class="form-row">
+          <div class="range-label-row">
+            <label data-i18n="setup.silenceThreshold">Silence Threshold (seconds)</label>
+            <span class="range-value" id="silenceThresholdVal">60s</span>
+          </div>
+          <input type="range" id="silenceThreshold" class="vs-range" min="30" max="600" value="60" step="10">
+          <div class="input-hint" data-i18n="setup.silenceHint">How long with no AI output before treating response as complete</div>
+        </div>
+        <div class="form-row">
+          <div class="range-label-row">
+            <label data-i18n="setup.autoPassDelay">Auto-Pass Delay (seconds)</label>
+            <span class="range-value" id="autoPassDelayVal">15s</span>
+          </div>
+          <input type="range" id="autoPassDelay" class="vs-range" min="5" max="60" value="15" step="5">
+          <div class="input-hint" data-i18n="setup.autoPassHint">How long in testing state before auto-passing</div>
+        </div>
+      </div>
+      <div class="settings-col settings-actions-col">
+        <div class="panel-title">⚙️ <span data-i18n="setup.advancedActions">Advanced Actions</span></div>
+        <div class="form-row">
+          <button class="btn-settings-action" id="btnExport">📥 <span data-i18n="setup.export">Export Config</span></button>
+        </div>
+        <div class="form-row">
+          <button class="btn-settings-action" id="btnImport">📤 <span data-i18n="setup.import">Import Config</span></button>
+          <input type="file" id="importFileInput" accept="json" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Preview -->
+    <div class="layout-preview-panel" id="layoutPreviewPanel" style="display:none">
+      <div class="panel-title" id="layoutPreviewTitle">🎛️ <span data-i18n="setup.layoutPreview">Layout Preview (drag to reorder)</span></div>
+      <div class="layout-preview-hint" data-i18n="setup.layoutPreviewHint">💡 Tip: Drag items in the project list or cards below to reorder</div>
+      <div class="layout-preview-grid" id="layoutPreviewGrid"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="setup-footer">
+      <div class="footer-left">
+        <div class="layout-selector">
+          <label>Layout:</label>
+          <button class="layout-btn active" data-rows="2" data-cols="3">2 x 3</button>
+          <button class="layout-btn" data-rows="2" data-cols="2">2 x 2</button>
+          <button class="layout-btn" data-rows="3" data-cols="3">3 x 3</button>
+          <button class="layout-btn" data-rows="1" data-cols="4">1 x 4</button>
+        </div>
+        <div class="footer-actions">
+          <button class="btn-footer-action" id="btnExportFooter">📥 <span data-i18n="setup.export">Export Config</span></button>
+          <button class="btn-footer-action" id="btnImportFooter">📤 <span data-i18n="setup.import">Import Config</span></button>
+          <input type="file" id="importFileInputFooter" accept=".json" style="display:none">
+        </div>
+      </div>
+      <button class="btn-launch" id="btnLaunch" disabled>🚀 <span data-i18n="setup.saveAndLaunch">Save & Launch Workspace</span></button>
+    </div>
+  </div>
+
+  <script src="/i18n.js"></script>
+  <script src="/theme-engine.js?v=30"></script>
+  <script src="setup.js?v=7"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>

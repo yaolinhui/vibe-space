@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Runtime config & secrets
+config.json
+config.json.bak
+config.json.manual-backup-*
+config.runtime-state.json
+.env
+.env.*
+
+# Logs
+*.log
+server-out.log
+server-err.log
+
+# Backups
+backups/
+backup/
+*.bak
+*.tmp*
+*.tmp
+
+# Runtime artifacts
+server.pid
+server-run.pid
+temp_select_folder.ps1
+temp_select_folder.vbs
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code local settings
+.claude/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Local project attachments
+**/attachments/
+
+# Keep example config
+!config.example.json
