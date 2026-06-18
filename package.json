@@ -31,8 +31,16 @@
     "workspace",
     "multi-project"
   ],
-  "author": "",
+  "author": "Vibe Space Contributors",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yaolinhui/vibe-space.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yaolinhui/vibe-space/issues"
+  },
+  "homepage": "https://github.com/yaolinhui/vibe-space#readme",
   "dependencies": {
     "express": "^5.2.1",
     "node-pty": "^1.1.0",

@@ -2,9 +2,13 @@
 
 > Multi-Agent Task Queue for Claude Code — manage multiple AI coding sessions in one workspace.
 
-Vibe Space turns Claude Code (and other AI CLI agents) into a **multi-project command center**. Instead of juggling terminal windows, you get a single dashboard where you can queue tasks, dispatch them to parallel AI sessions, and monitor every agent's status at a glance.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+**Vibe Space** turns Claude Code (and other AI CLI agents) into a **multi-project command center**. Instead of juggling terminal windows, you get a single dashboard where you can queue tasks, dispatch them to parallel AI sessions, and monitor every agent's status at a glance.
 
 ![Vibe Space Screenshot](./vibe-space-final.png)
+
+> **Disclaimer:** Vibe Space is an independent, community-driven project. It is not affiliated with, endorsed by, or sponsored by Anthropic, Moonshot AI, or any other AI provider mentioned in this repository.
 
 ## Why Vibe Space?
 
@@ -159,3 +163,7 @@ Contributions are welcome! Please open an issue or pull request.
 ## License
 
 [MIT](./LICENSE)
+
+---
+
+**Made with ❤️ by the Vibe Space community.**
