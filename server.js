@@ -683,6 +683,10 @@ app.get('/health', (req, res) => {
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/xterm', express.static(path.join(__dirname, 'node_modules', '@xterm', 'xterm', 'lib')));
 app.use('/xterm-addon-fit', express.static(path.join(__dirname, 'node_modules', '@xterm', 'addon-fit', 'lib')));
+// The @xterm/addon-fit package ships as addon-fit.js, but the frontend keeps the legacy URL.
+app.get('/xterm-addon-fit/xterm-addon-fit.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'node_modules', '@xterm', 'addon-fit', 'lib', 'addon-fit.js'));
+});
 app.use('/xterm-css', express.static(path.join(__dirname, 'node_modules', '@xterm', 'xterm', 'css')));
 
 app.get('/api/config', (req, res) => {
