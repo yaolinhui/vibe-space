@@ -681,9 +681,9 @@ app.get('/health', (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
-app.use('/xterm', express.static(path.join(__dirname, 'node_modules', 'xterm', 'lib')));
-app.use('/xterm-addon-fit', express.static(path.join(__dirname, 'node_modules', 'xterm-addon-fit', 'lib')));
-app.use('/xterm-css', express.static(path.join(__dirname, 'node_modules', 'xterm', 'css')));
+app.use('/xterm', express.static(path.join(__dirname, 'node_modules', '@xterm', 'xterm', 'lib')));
+app.use('/xterm-addon-fit', express.static(path.join(__dirname, 'node_modules', '@xterm', 'addon-fit', 'lib')));
+app.use('/xterm-css', express.static(path.join(__dirname, 'node_modules', '@xterm', 'xterm', 'css')));
 
 app.get('/api/config', (req, res) => {
   res.json(config);
