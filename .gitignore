@@ -26,6 +26,7 @@ backup/
 # Runtime artifacts
 server.pid
 server-run.pid
+daemon.pid
 temp_select_folder.ps1
 temp_select_folder.vbs
 
