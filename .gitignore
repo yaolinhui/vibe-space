@@ -51,3 +51,9 @@ Thumbs.db
 
 # Keep example config
 !config.example.json
+
+# Vibe Space runtime state & logs
+.vibe-space/
+
+# Local promo materials (not for GitHub)
+项目宣传物料/
